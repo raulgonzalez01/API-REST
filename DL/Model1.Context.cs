@@ -30,11 +30,6 @@ namespace DL
         public virtual DbSet<Direcciones> Direcciones { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
     
-        public virtual ObjectResult<GetAll_Result> GetAll()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAll_Result>("GetAll");
-        }
-    
         public virtual int ActualizarDireccion(Nullable<int> idDireccion, string nombre, string calle, string codigoPais)
         {
             var idDireccionParameter = idDireccion.HasValue ?
@@ -142,6 +137,45 @@ namespace DL
                 new ObjectParameter("IdUsuario", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("Eliminar", idUsuarioParameter);
+        }
+    
+        public virtual ObjectResult<GetAll_Result> GetAll(string sortBy)
+        {
+            var sortByParameter = sortBy != null ?
+                new ObjectParameter("SortBy", sortBy) :
+                new ObjectParameter("SortBy", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAll_Result>("GetAll", sortByParameter);
+        }
+    
+        public virtual int FiltroDinamico(string campo, string operacion, string valor)
+        {
+            var campoParameter = campo != null ?
+                new ObjectParameter("Campo", campo) :
+                new ObjectParameter("Campo", typeof(string));
+    
+            var operacionParameter = operacion != null ?
+                new ObjectParameter("Operacion", operacion) :
+                new ObjectParameter("Operacion", typeof(string));
+    
+            var valorParameter = valor != null ?
+                new ObjectParameter("Valor", valor) :
+                new ObjectParameter("Valor", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("FiltroDinamico", campoParameter, operacionParameter, valorParameter);
+        }
+    
+        public virtual ObjectResult<SpLogin_Result> SpLogin(string taxId, string password)
+        {
+            var taxIdParameter = taxId != null ?
+                new ObjectParameter("TaxId", taxId) :
+                new ObjectParameter("TaxId", typeof(string));
+    
+            var passwordParameter = password != null ?
+                new ObjectParameter("Password", password) :
+                new ObjectParameter("Password", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SpLogin_Result>("SpLogin", taxIdParameter, passwordParameter);
         }
     }
 }

@@ -72,7 +72,18 @@
         <Function Name="Eliminar" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IdUsuario" Type="int" Mode="In" />
         </Function>
-        <Function Name="GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="FiltroDinamico" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Campo" Type="varchar" Mode="In" />
+          <Parameter Name="Operacion" Type="varchar" Mode="In" />
+          <Parameter Name="Valor" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SortBy" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SpLogin" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TaxId" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar(max)" Mode="In" />
+        </Function>
         <EntityContainer Name="UsuariosModelStoreContainer">
           <EntitySet Name="Direcciones" EntityType="Self.Direcciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
@@ -92,7 +103,6 @@
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Direcciones" EntitySet="Direcciones" />
           </AssociationSet>
-          <FunctionImport Name="GetAll" ReturnType="Collection(UsuariosModel.GetAll_Result)" />
           <FunctionImport Name="ActualizarDireccion">
             <Parameter Name="IdDireccion" Mode="In" Type="Int32" />
             <Parameter Name="Nombre" Mode="In" Type="String" />
@@ -122,7 +132,19 @@
             <Parameter Name="FechaCreacion" Mode="In" Type="DateTimeOffset" />
           </FunctionImport>
           <FunctionImport Name="Eliminar">
-            <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
+          <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetAll" ReturnType="Collection(UsuariosModel.GetAll_Result)">
+          <Parameter Name="SortBy" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="FiltroDinamico">
+            <Parameter Name="Campo" Mode="In" Type="String" />
+            <Parameter Name="Operacion" Mode="In" Type="String" />
+            <Parameter Name="Valor" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SpLogin" ReturnType="Collection(UsuariosModel.SpLogin_Result)">
+            <Parameter Name="TaxId" Mode="In" Type="String" />
+            <Parameter Name="Password" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Direcciones">
@@ -176,6 +198,15 @@
           <Property Type="String" Name="Calle" Nullable="true" MaxLength="255" />
           <Property Type="String" Name="CodigoPais" Nullable="true" MaxLength="3" />
         </ComplexType>
+        <ComplexType Name="SpLogin_Result">
+          <Property Type="Int32" Name="IdUsuario" Nullable="false" />
+          <Property Type="String" Name="Nombre" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="TelefonO" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="Password" Nullable="false" />
+          <Property Type="String" Name="TaxId" Nullable="false" MaxLength="13" />
+          <Property Type="DateTimeOffset" Name="FechaCreacion" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -206,6 +237,11 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ActualizarDireccion" FunctionName="UsuariosModel.Store.ActualizarDireccion" />
+          <FunctionImportMapping FunctionImportName="ActualizarUsuario" FunctionName="UsuariosModel.Store.ActualizarUsuario" />
+          <FunctionImportMapping FunctionImportName="AgregarDireccion" FunctionName="UsuariosModel.Store.AgregarDireccion" />
+          <FunctionImportMapping FunctionImportName="AgregarUsuario" FunctionName="UsuariosModel.Store.AgregarUsuario" />
+          <FunctionImportMapping FunctionImportName="Eliminar" FunctionName="UsuariosModel.Store.Eliminar" />
           <FunctionImportMapping FunctionImportName="GetAll" FunctionName="UsuariosModel.Store.GetAll">
             <ResultMapping>
               <ComplexTypeMapping TypeName="UsuariosModel.GetAll_Result">
@@ -223,11 +259,20 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="ActualizarDireccion" FunctionName="UsuariosModel.Store.ActualizarDireccion" />
-          <FunctionImportMapping FunctionImportName="ActualizarUsuario" FunctionName="UsuariosModel.Store.ActualizarUsuario" />
-          <FunctionImportMapping FunctionImportName="AgregarDireccion" FunctionName="UsuariosModel.Store.AgregarDireccion" />
-          <FunctionImportMapping FunctionImportName="AgregarUsuario" FunctionName="UsuariosModel.Store.AgregarUsuario" />
-          <FunctionImportMapping FunctionImportName="Eliminar" FunctionName="UsuariosModel.Store.Eliminar" />
+          <FunctionImportMapping FunctionImportName="FiltroDinamico" FunctionName="UsuariosModel.Store.FiltroDinamico" />
+          <FunctionImportMapping FunctionImportName="SpLogin" FunctionName="UsuariosModel.Store.SpLogin">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="UsuariosModel.SpLogin_Result">
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="TelefonO" ColumnName="TelefonO" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="TaxId" ColumnName="TaxId" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

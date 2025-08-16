@@ -15,7 +15,7 @@ namespace ML
         public string Password { get; set;}
         public string TaxId { get; set;}
 
-        public string FechaCreacion { get; set;}
+        public DateTimeOffset FechaCreacion { get; set;}
 
         //public List<object> Usuarios { get; set; }
 
