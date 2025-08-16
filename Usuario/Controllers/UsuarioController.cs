@@ -86,7 +86,7 @@ namespace Usuario.Controllers
         [Route("api/Usuario/ActualizarDireccion")]
         public async Task<IHttpActionResult> ActualizarDireccion([FromBody] ML.Direccion direccion)
         {
-            ML.Result result = await Task.Run(() => BL.Usuarios.AgregarDireccion(direccion));
+            ML.Result result = await Task.Run(() => BL.Usuarios.ActualizarDireccion(direccion));
 
 
             if (result.Correct)
